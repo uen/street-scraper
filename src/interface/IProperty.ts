@@ -1,9 +1,4 @@
-export interface IRightMoveResponse {
-  properties: IRightMoveProperty[],
-  resultCount: Number
-}
-
-export interface IRightMoveProperty {
+export interface IProperty {
   id: number;
   bedrooms: number;
   bathrooms: number;

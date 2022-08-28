@@ -1,4 +1,4 @@
-import { IRightMoveProperty } from "./rightmove/IRightMoveProperty";
+import { IProperty } from "./interface/IProperty";
 import { GoogleSpreadsheet } from "google-spreadsheet";
 import * as fs from "fs";
 import "dotenv/config";
@@ -13,7 +13,7 @@ const document = new GoogleSpreadsheet(process.env.SHEET_DOCUMENT_ID);
 })();
 
 export const handleFindSuitableProperty = async (
-  property: IRightMoveProperty,
+  property: IProperty,
   area: string = "Unknown"
 ) => {
   await document.loadInfo();

@@ -1,6 +1,6 @@
 import { chunk, first } from "lodash";
 import axios from "axios";
-import { rightMoveApi } from "./api";
+import { rightMoveApi } from "../service/rightmove-api";
 
 interface ILookAheadResponse {
   typeAheadLocations: {
