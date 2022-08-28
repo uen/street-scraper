@@ -1,4 +1,4 @@
-import { IAppConfig } from "./IAppConfig";
+import { IAppConfig } from "./interface/IAppConfig";
 
 export const appConfig: IAppConfig = {
   peopleCount: 3,
