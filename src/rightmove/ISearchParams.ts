@@ -1,20 +1,20 @@
-export interface SearchParams {
-    locationIdentifier: String,
-    maxBedrooms: Number,
+export interface ISearchParams {
+    locationIdentifier?: String,
     minBedrooms: Number,
-    maxPrice: Number,
+    maxBedrooms: Number,
     minPrice: Number,
+    maxPrice: Number,
     numberOfPropertiesPerPage: Number,
     radius: Number,
     // Sort enum
-    sortType: 2,
+    sortType: Number,
     index: Number,
-    propertyTypes: ["bungalow, detached", "flat", "semi-detached", "terraced"],
-    viewType: "LIST",
-    dontShow: ["houseShare", "student"],
-    channel: "RENT",
-    areaSizeUnit: "sqft",
-    currencyCode: "GBP",
-    isFetching: false,
-    viewport: ""
+    propertyTypes: String[],
+    viewType: String,
+    dontShow: String[]
+    channel: String ,
+    areaSizeUnit: String,
+    currencyCode: String,
+    isFetching: boolean,
+    viewport: String
 }
