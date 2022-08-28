@@ -1,4 +1,4 @@
-import { ISearchParams } from "./interface/ISearchParams";
+import { ISearchParams } from "./ISearchParams";
 
 type ConfigSearchParams = Omit<ISearchParams, "locationIdentifier">;
 
