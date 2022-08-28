@@ -2,7 +2,11 @@ import { IAppConfig } from "./IAppConfig";
 import { ISearchParams } from "./rightmove/ISearchParams";
 
 export const appConfig: IAppConfig = {
-    criteria: [],
+    peopleCount: 3,
+    criteria: [{
+        searchTerm: "Clapham",
+        radius: 2.0
+    }],
     defaultCriteria: {
         minBedrooms: 3,
         maxBedrooms: 4,
