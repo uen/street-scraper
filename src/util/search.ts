@@ -13,7 +13,15 @@ export const search = async (
   const { status, data } = await rightMoveApi.get<ISearchResponse>(
     "api/_search",
     {
-      params: { ...searchParams },
+      params: {
+        ...searchParams, 
+        propertyTypes: undefined, 
+        ...searchParams.propertyTypes?.reduce<Record<string, number> extends object>(
+          (encodedPropertyTypes, propertyType, index) => ({
+            ...encodedPropertyTypes,
+            [`propertyTypes${encodeURI(`${index}`)}`]: propertyType
+          }), {})
+      },
     }
   );
 
