@@ -1,13 +1,6 @@
 import { chunk, first } from "lodash";
 import axios from "axios";
-
-const rightMoveApi = axios.create({
-  baseURL: `https://www.rightmove.co.uk/`,
-  headers: {
-    "Content-Type": "application/json",
-  },
-  validateStatus: () => true,
-});
+import { rightMoveApi } from "./rightmove/api";
 
 export const getRegionCode = async (searchTerm: string) => {
   // typeAhead/uknostreet/CL/AP/HA/M%20/CO/MM/ON/
@@ -24,9 +17,13 @@ export const getRegionCode = async (searchTerm: string) => {
   console.log(searchTerms);
   // console.log(`typeAhead/uknostreet/${encodedChunks.join("/")}`);
 
-  const data = await rightMoveApi.get(`typeAhead/uknostreet/${searchTerms}`);
-  console.log(data);
-  if (data.status === 200) {
-    return;
+  const { status, data } = await rightMoveApi.get(
+    `typeAhead/uknostreet/${searchTerms}`
+  );
+
+  if (status === 200) {
+    return data;
   }
+
+  throw new Error(`Could not get region code from string: ${searchTerm}`);
 };
