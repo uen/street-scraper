@@ -3,7 +3,7 @@ import { IRightMoveProperty, IRightMoveResponse } from "./IRightMoveProperty"
 import { ISearchParams } from "./ISearchParams"
 
 export const search = async (searchParams: ISearchParams): Promise<IRightMoveResponse> => {
-    const { status, data } = await rightMoveApi.get<IRightMoveResponse>('api/_search', {
+    const { status, data } = await rightMoveApi.get<IRightMoveResponse>('/api/_search', {
         params: searchParams
     })
 
