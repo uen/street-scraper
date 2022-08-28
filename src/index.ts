@@ -1,4 +1,4 @@
-import { getRegionCode } from "./scraper";
+import { getRegionCode } from "./rightmove/region-code";
 
 console.log("hi");
 
