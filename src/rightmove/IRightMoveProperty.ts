@@ -14,7 +14,9 @@ export interface IRightMoveProperty {
   listingUpdate: ListingUpdate;
   premiumListing: boolean;
   featuredProperty: boolean;
-  price: Price;
+  price: {
+    amount: number;
+  };
   customer: Customer;
   distance: number;
   transactionType: string;
@@ -48,6 +50,10 @@ export interface IRightMoveProperty {
   isRecent: boolean;
   formattedDistance: string;
   heading: string;
+  furnishTypes?: {
+    value: string;
+    description: string;
+  }[];
 }
 
 export interface Location {
