@@ -4,9 +4,41 @@ export const appConfig: IAppConfig = {
   peopleCount: 3,
   criteria: [
     {
-      searchTerm: "Clapham",
-      radius: 2.0,
+      searchTerm: "Clapham Station",
+      radius: 1.0,
     },
+    {
+      searchTerm: "Clapham North",
+      radius: 1.0,
+    },
+    {
+      searchTerm: "Clapham Common",
+      radius: 1.0,
+    },
+    {
+      searchTerm: "Putney",
+      radius: 0.5
+    },
+    {
+      searchTerm: "Brixton",
+      radius: 0.5
+    },
+    {
+      searchTerm: "Vauxhall",
+      radius: 1.0
+    },
+    {
+      searchTerm: "Stockwell",
+      radius: 1.0
+    },
+    {
+      searchTerm: "Peckham",
+      radius: 0.5
+    },
+    {
+      searchTerm: "Streatham",
+      radius: 0.5
+    }
   ],
   defaultCriteria: {
     minBedrooms: 3,
@@ -18,7 +50,7 @@ export const appConfig: IAppConfig = {
     // Sort enum
     sortType: 2,
     index: 0,
-    propertyTypes: ["bungalow, detached", "flat", "semi-detached", "terraced"],
+    propertyTypes: ["bungalow", " detached", "flat", "semi-detached", "terraced"],
     viewType: "LIST",
     dontShow: ["houseShare", "student"],
     channel: "RENT",
