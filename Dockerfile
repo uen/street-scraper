@@ -12,4 +12,4 @@ COPY src ./src
 COPY tsconfig.json ./tsconfig.json
 COPY package.json package.json
 
-CMD [ "yarn", "start"]
+ENTRYPOINT [ "yarn", "start"]
