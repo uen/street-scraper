@@ -8,6 +8,7 @@ import "dotenv/config";
 import { findPostcode } from "./util/postcode";
 import { APP_CONFIG } from "./config";
 import * as dayjs from "dayjs";
+import { first } from "lodash";
 
 const document = new GoogleSpreadsheet(process.env.SHEET_DOCUMENT_ID);
 
@@ -58,23 +59,24 @@ export const handleExportSuitableProperty = async (
     }
   | undefined
 > => {
-  const matchedRow = await rows.find((row) => {
+  const matchedRows = await rows.filter((row) => {
     if (`${row.ID}` === `${property.id}`) {
       return true;
     }
   });
 
-  if (matchedRow) {
-    await new Promise((resolve) => setTimeout(resolve, 1000));
+  for (const matchedRow of matchedRows) {
+    await new Promise((resolve) => setTimeout(resolve, 300));
     await matchedRow.delete();
   }
 
+  const firstMatch = first(matchedRows);
   await new Promise((resolve) => setTimeout(resolve, 1000));
 
-  const previousPrice = matchedRow
-    ? matchedRow["PCM"].substring(1)
+  const previousPrice = firstMatch
+    ? firstMatch["PCM"].substring(1)
     : property.price.amount;
-  const priceChange = matchedRow
+  const priceChange = firstMatch
     ? +(
         ((property.price.amount - previousPrice) / previousPrice) *
         100
@@ -98,13 +100,13 @@ export const handleExportSuitableProperty = async (
     "PCM/PP": `£${Math.floor(property.price.amount / APP_CONFIG.peopleCount)}`,
   });
 
-  if (matchedRow && priceChange <= -APP_CONFIG.notifyLowerPriceThreshold) {
+  if (firstMatch && priceChange <= -APP_CONFIG.notifyLowerPriceThreshold) {
     return {
       isNew: true,
       percentageChange: priceChange,
       property,
     };
-  } else if (!matchedRow) {
+  } else if (!firstMatch) {
     return {
       property,
     };
