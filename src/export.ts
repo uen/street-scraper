@@ -85,7 +85,7 @@ export const handleExportSuitableProperty = async (
     Address: property.displayAddress,
     Postcode: findPostcode(property.displayAddress) ?? "",
     Area: area,
-    Beds: property.bedrooms,
+    Bedrooms: property.bedrooms,
     Bathrooms: property.bathrooms,
     "Updated at": dayjs(property.listingUpdate.listingUpdateDate).format(
       "DD/MM/YYYY"
