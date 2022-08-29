@@ -1,11 +1,16 @@
 import axios from "axios";
 import { isEmpty } from "lodash";
 import { APP_CONFIG } from "./config";
+import { sendDiscordMessage } from "./discord";
 import { handleExportSuitableProperty, IPriceChangeProperty } from "./export";
 import { IProperty } from "./interface/IProperty";
 import { sendNotification } from "./service/notiversal-api";
 import { getRegionCode } from "./util/region-code";
 import { search } from "./util/search";
+import {
+  generateNewPropertyMessage,
+  generateReducedPropertyMessage,
+} from "./util/text-generation";
 
 (async () => {
   const resolvedCriteria = APP_CONFIG.criteria.map((criteria) => ({
@@ -14,7 +19,7 @@ import { search } from "./util/search";
   }));
 
   const newProperties: IProperty[] = [];
-  const priceLoweredProperties: IPriceChangeProperty[] = [];
+  const reducedProperties: IPriceChangeProperty[] = [];
 
   const propertiesToAdd: { property: IProperty; searchTerm: string }[] = [];
   for (const criteria of resolvedCriteria) {
@@ -46,61 +51,55 @@ import { search } from "./util/search";
   }
 
   for (const { property, searchTerm } of propertiesToAdd) {
-    const listedProperty = await handleExportSuitableProperty(
-      property,
-      searchTerm
-    );
+    // const listedProperty = await handleExportSuitableProperty(
+    //   property,
+    //   searchTerm
+    // );
 
-    if (listedProperty && listedProperty.isNew) {
-      priceLoweredProperties.push({
-        percentageDifference: `${listedProperty.percentageChange}`,
-        property,
-      });
-    } else if (listedProperty) {
-      newProperties.push(listedProperty.property);
-    }
-    newProperties.push(property)
+    // if (listedProperty && listedProperty.isNew) {
+    //   reducedProperties.push({
+    //     percentageDifference: `${listedProperty.percentageChange}`,
+    //     property,
+    //   });
+    // } else if (listedProperty) {
+    //   newProperties.push(listedProperty.property);
+    // }
+    newProperties.push(property);
   }
 
-  if (!isEmpty(priceLoweredProperties)) {
+  if (!isEmpty(reducedProperties)) {
     console.log(
       "Reduced property:",
-      priceLoweredProperties.map((a) => ({
+      reducedProperties.map((a) => ({
         id: a.property.id,
         diff: a.percentageDifference,
       }))
     );
 
-    const priceLoweredPropertiesNotification = {
+    const reducedPropertyMessage =
+      generateReducedPropertyMessage(reducedProperties);
+    const reducedPropertiesNotification = {
       event: "reduced-propery",
       title: "Reduced Properties",
       subtitle: "Properties matching your criteria have been reduced",
       actions: [
         {
           label: "View Properties",
-          link: "https://app.notiversal.com"
-        }
+          link: "https://app.notiversal.com",
+        },
       ],
-      body: `
-  *Reduced Properties*
-  ** ${priceLoweredProperties.length} reduced properties
-  ${priceLoweredProperties
-          .filter(reducedProperty => reducedProperty.property.displayAddress)
-          .map((reducedProperty, index) => `${index}. ${reducedProperty.property.displayAddress} ${reducedProperty.property.price.amount} (${reducedProperty.percentageDifference})`)
-          .join("\n")}
-      `
-    }
+      body: reducedPropertyMessage,
+    };
 
-    sendNotification(priceLoweredPropertiesNotification);
+    sendDiscordMessage(reducedPropertyMessage);
+
+    sendNotification(reducedPropertiesNotification);
   }
 
-
   if (!isEmpty(newProperties)) {
-    console.log(
-      "New properties",
-      newProperties.map((a) => a.id).join(",")
-    );
+    console.log("New properties", newProperties.map((a) => a.id).join(","));
 
+    const newPropertyMessage = generateNewPropertyMessage(newProperties);
     const newPropertyNotification = {
       event: "new-properties",
       title: "New Properties",
@@ -108,18 +107,13 @@ import { search } from "./util/search";
       actions: [
         {
           label: "View Properties",
-          link: "https://app.notiversal.com"
-        }
+          link: "https://app.notiversal.com",
+        },
       ],
-      body: `
-  *New Properties*
-  ** ${newProperties.length} new properties
-  ${newProperties
-          .filter(property => property.displayAddress)
-          .map((property, index) => `${index}. ${property.displayAddress} ${property.price.amount}`)
-          .join("\n")}
-      `
-    }
+      body: newPropertyMessage,
+    };
+
+    sendDiscordMessage(newPropertyMessage);
 
     sendNotification(newPropertyNotification);
   }
