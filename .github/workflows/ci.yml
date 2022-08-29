@@ -30,7 +30,6 @@ jobs:
           username: ${{ github.actor }}
           password: ${{ secrets.GITHUB_TOKEN }}
 
-      
       - name: Extract image metadata
         id: meta
         uses: docker/metadata-action@98669ae865ea3cffbcbaa878cf57c20bbf1c6c38
@@ -54,20 +53,6 @@ jobs:
        
       - name: Save kubeconfig
         run: doctl kubernetes cluster kubeconfig save --expiry-seconds 600 ${{ env.CLUSTER }}
-      
-      - name: Update Config
-        uses: swdotcom/update-and-apply-kubernetes-configs@v1
-        with:
-          k8-config-file-paths: |
-            ${{env.CONFIG_MANIFEST_FILE}}
-          replacement-method: defined
-        env:
-          SHEET_DOCUMENT_ID: ${{ secrets.SHEET_DOCUMENT_ID }}
-          SHEET_CLIENT_EMAIL: ${{ secrets.SHEET_CLIENT_EMAIL }}
-          SHEET_CLIENT_PRIVATE_KEY: ${{ secrets.SHEET_CLIENT_PRIVATE_KEY }}
-          DISCORD_CHANNEL_ID: ${{ secrets.DISCORD_CHANNEL_ID }}
-          DISCORD_TOKEN: ${{ secrets.DISCORD_TOKEN }}
-          NOTIVERSAL_API_KEY: ${{ secrets.NOTIVERSAL_API_KEY }}
 
       - name: Apply CronJob
         run: kubectl apply -f $GITHUB_WORKSPACE/${{ env.CRON_MANIFEST_FILE }}
