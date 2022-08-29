@@ -1,5 +1,5 @@
 export interface ISearchParams {
-  locationIdentifier?: String;
+  locationIdentifier?: string;
   minBedrooms?: Number;
   maxBedrooms?: Number;
   minPrice?: Number;
@@ -9,12 +9,12 @@ export interface ISearchParams {
   // TODO: Sort enum
   sortType?: Number;
   index?: Number;
-  propertyTypes?: String[];
-  viewType?: String;
-  dontShow?: String[];
-  channel?: String;
-  areaSizeUnit?: String;
-  currencyCode?: String;
+  propertyTypes?: string[];
+  viewType?: string;
+  dontShow?: string[];
+  channel?: string;
+  areaSizeUnit?: string;
+  currencyCode?: string;
   isFetching?: boolean;
-  viewport?: String;
+  viewport?: string;
 }

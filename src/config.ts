@@ -1,7 +1,8 @@
 import { IAppConfig } from "./interface/IAppConfig";
 
-export const appConfig: IAppConfig = {
+export const APP_CONFIG: IAppConfig = {
   peopleCount: 3,
+  notifyLowerPriceThreshold: 5,
   criteria: [
     {
       searchTerm: "Clapham Station",
@@ -17,28 +18,28 @@ export const appConfig: IAppConfig = {
     },
     {
       searchTerm: "Putney",
-      radius: 0.5
+      radius: 0.5,
     },
     {
       searchTerm: "Brixton",
-      radius: 0.5
+      radius: 0.5,
     },
     {
       searchTerm: "Vauxhall",
-      radius: 1.0
+      radius: 1.0,
     },
     {
       searchTerm: "Stockwell",
-      radius: 1.0
+      radius: 1.0,
     },
     {
       searchTerm: "Peckham",
-      radius: 0.5
+      radius: 0.5,
     },
     {
       searchTerm: "Streatham",
-      radius: 0.5
-    }
+      radius: 0.5,
+    },
   ],
   defaultCriteria: {
     minBedrooms: 3,
@@ -50,7 +51,13 @@ export const appConfig: IAppConfig = {
     // Sort enum
     sortType: 2,
     index: 0,
-    propertyTypes: ["bungalow", " detached", "flat", "semi-detached", "terraced"],
+    propertyTypes: [
+      "bungalow",
+      " detached",
+      "flat",
+      "semi-detached",
+      "terraced",
+    ],
     viewType: "LIST",
     dontShow: ["houseShare", "student"],
     channel: "RENT",

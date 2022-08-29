@@ -6,26 +6,38 @@ export interface ISearchResponse {
   properties: IProperty[];
   resultCount: Number;
 }
-// type b = Record<string, number> extends Object /
+
+const mapToRequestArray = (
+  type: string,
+  data?: string[]
+): Record<string, string> => {
+  if (!data) return {};
+
+  return data?.reduce<Record<string, string>>(
+    (encodedPropertyTypes, propertyType, index) => ({
+      ...encodedPropertyTypes,
+      [`${type}${encodeURI(`[${index}]`)}`]: `${propertyType}`,
+    }),
+    {}
+  );
+};
 
 export const search = async (
   searchParams: ISearchParams
 ): Promise<ISearchResponse> => {
+  const params = {
+    params: {
+      ...searchParams,
+      propertyTypes: undefined,
+      dontShow: undefined,
+      ...mapToRequestArray("propertyTypes", searchParams.propertyTypes),
+      ...mapToRequestArray("dontShow", searchParams.dontShow),
+      locationIdentifier: searchParams.locationIdentifier,
+    },
+  };
   const { status, data } = await rightMoveApi.get<ISearchResponse>(
     "api/_search",
-    {
-      params: {
-        ...searchParams,
-        propertyTypes: undefined,
-        ...searchParams.propertyTypes?.reduce<Record<string, string>>(
-          (encodedPropertyTypes, propertyType, index) => ({
-            ...encodedPropertyTypes,
-            [`propertyTypes${encodeURI(`${index}`)}`]: `${propertyType}`,
-          }),
-          {}
-        ),
-      },
-    }
+    { params: params.params }
   );
 
   if (status === 200 && data) return data;
