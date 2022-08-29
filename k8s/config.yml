@@ -1,8 +1,9 @@
 apiVersion: v1
-kind: ConfigMap
+kind: Secret
 metadata:
-  name: street-scraper-confiig
+  name: street-scraper-secrets
   namespace: street-scraper
+type: Opaque
 data:
   SHEET_DOCUMENT_ID: "${SHEET_DOCUMENT_ID}"
   SHEET_CLIENT_EMAIL: "${SHEET_CLIENT_EMAIL}"

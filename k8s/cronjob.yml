@@ -13,4 +13,7 @@ spec:
           - name: screet-scraper
             image: ghcr.io/uen/street-scraper:latest
             imagePullPolicy: Always
+            envFrom:
+            - secretRef:
+                name: street-scraper-secrets
           restartPolicy: OnFailure
