@@ -1,0 +1,73 @@
+name: Deploy StreetScraper
+
+on:
+  workflow_dispatch:
+  push:
+    branches: ['master']
+
+env:
+  REGISTRY: ghcr.io/uen
+  IMAGE_NAME: street-scraper
+  CLUSTER: k8s-1-21-3-do-0-lon1-1634243075945
+  CRON_MANIFEST_FILE: k8s/cronjob.yml
+  CONFIG_MANIFEST_FILE: k8s/config.yml
+
+jobs:
+   deployment:
+    runs-on: ubuntu-latest
+    permissions:
+      contents: read
+      packages: write
+
+    steps:
+      - name: Checkout repository
+        uses: actions/checkout@v2
+
+      - name: Log in to the Container registry
+        uses: docker/login-action@f054a8b539a109f9f41c372932f1ae047eff08c9
+        with:
+          registry: ${{ env.REGISTRY }}
+          username: ${{ github.actor }}
+          password: ${{ secrets.GITHUB_TOKEN }}
+
+      
+      - name: Extract image metadata
+        id: meta
+        uses: docker/metadata-action@98669ae865ea3cffbcbaa878cf57c20bbf1c6c38
+        with:
+          images: ${{ env.REGISTRY }}/${{ env.IMAGE_NAME }}
+          tags: |
+            type=sha,enable=true,suffix=,format=short
+      
+      - name: Build and push Docker image
+        uses: docker/build-push-action@ad44023a93711e3deb337508980b4b5e9bcdc5dc
+        with:
+          context: api
+          push: true
+          tags: ${{ steps.meta.outputs.tags }}
+          labels: ${{ steps.meta.outputs.labels }}
+      
+      - name: Install doctl
+        uses: digitalocean/action-doctl@v2
+        with:
+          token: ${{ secrets.DIGITALOCEAN_ACCESS_TOKEN }}
+       
+      - name: Save kubeconfig
+        run: doctl kubernetes cluster kubeconfig save --expiry-seconds 600 ${{ env.CLUSTER }}
+      
+      - name: Update Config
+        uses: swdotcom/update-and-apply-kubernetes-configs@v1
+        with:
+          k8-config-file-paths: |
+            ${{env.CONFIG_MANIFEST_FILE}}
+          replacement-method: defined
+        env:
+          SHEET_DOCUMENT_ID: ${{ secrets.SHEET_DOCUMENT_ID }}
+          SHEET_CLIENT_EMAIL: ${{ secrets.SHEET_CLIENT_EMAIL }}
+          SHEET_CLIENT_PRIVATE_KEY: ${{ secrets.SHEET_CLIENT_PRIVATE_KEY }}
+          DISCORD_CHANNEL_ID: ${{ secrets.DISCORD_CHANNEL_ID }}
+          DISCORD_TOKEN: ${{ secrets.DISCORD_TOKEN }}
+          NOTIVERSAL_API_KEY: ${{ secrets.NOTIVERSAL_API_KEY }}
+
+      - name: Apply CronJob
+        run: kubectl apply -f $GITHUB_WORKSPACE/${{ env.CRON_MANIFEST_FILE }}
