@@ -45,6 +45,7 @@ const SHEET_HEADER = [
 ];
 
 export const rewriteHeader = async () => {
+  await new Promise((res) => setTimeout(res, 1000));
   sheet?.setHeaderRow(SHEET_HEADER);
 };
 
@@ -66,7 +67,7 @@ export const handleExportSuitableProperty = async (
   });
 
   for (const matchedRow of matchedRows) {
-    await new Promise((resolve) => setTimeout(resolve, 300));
+    await new Promise((resolve) => setTimeout(resolve, 1000));
     await matchedRow.delete();
   }
 
