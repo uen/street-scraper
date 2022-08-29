@@ -26,7 +26,6 @@ import {
     console.log("Processing criteria", criteria);
 
     const locationIdentifier = await getRegionCode(criteria.searchTerm);
-    console.log(`Got location identifier ${locationIdentifier}`);
 
     const searchParams = {
       ...criteria,
@@ -51,20 +50,20 @@ import {
   }
 
   for (const { property, searchTerm } of propertiesToAdd) {
-    // const listedProperty = await handleExportSuitableProperty(
-    //   property,
-    //   searchTerm
-    // );
+    const listedProperty = await handleExportSuitableProperty(
+      property,
+      searchTerm
+    );
 
-    // if (listedProperty && listedProperty.isNew) {
-    //   reducedProperties.push({
-    //     percentageDifference: `${listedProperty.percentageChange}`,
-    //     property,
-    //   });
-    // } else if (listedProperty) {
-    //   newProperties.push(listedProperty.property);
-    // }
-    newProperties.push(property);
+    if (listedProperty && listedProperty.isNew) {
+      reducedProperties.push({
+        percentageDifference: `${listedProperty.percentageChange}`,
+        property,
+      });
+    } else if (listedProperty) {
+      newProperties.push(listedProperty.property);
+    }
+    // newProperties.push(property);
   }
 
   if (!isEmpty(reducedProperties)) {
