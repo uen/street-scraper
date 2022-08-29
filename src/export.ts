@@ -29,6 +29,24 @@ export interface IPriceChangeProperty {
   property: IProperty;
 }
 
+const SHEET_HEADER = [
+  "ID",
+  "Postcode",
+  "Area",
+  "Bedrooms",
+  "Bathrooms",
+  "Type",
+  "Link",
+  "PCM",
+  "PCM/PP",
+  "Updated at",
+  "Price change",
+];
+
+export const rewriteHeader = async () => {
+  sheet?.setHeaderRow(SHEET_HEADER);
+};
+
 export const handleExportSuitableProperty = async (
   property: IProperty,
   area: string = "Unknown"

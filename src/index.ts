@@ -2,7 +2,11 @@ import axios from "axios";
 import { isEmpty } from "lodash";
 import { APP_CONFIG } from "./config";
 import { sendDiscordMessage } from "./discord";
-import { handleExportSuitableProperty, IPriceChangeProperty } from "./export";
+import {
+  handleExportSuitableProperty,
+  IPriceChangeProperty,
+  rewriteHeader,
+} from "./export";
 import { IProperty } from "./interface/IProperty";
 import { sendNotification } from "./service/notiversal-api";
 import { getRegionCode } from "./util/region-code";
@@ -46,6 +50,7 @@ import {
     }
   }
 
+  rewriteHeader();
   for (const { property, searchTerm } of propertiesToAdd) {
     const listedProperty = await handleExportSuitableProperty(
       property,
@@ -103,4 +108,6 @@ import {
 
     sendNotification(newPropertyNotification);
   }
+
+  rewriteHeader();
 })();
