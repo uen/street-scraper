@@ -5,9 +5,14 @@ metadata:
   namespace: street-scraper
 spec:
   schedule: "*/30 * * * *"
+  failedJobsHistoryLimit: 3
+  successfulJobsHistoryLimit: 3
   jobTemplate:
     spec:
-      activeDeadlineSeconds: 480
+      # Remove finished jobs after an hour
+      ttlSecondsAfterFinished: 3600
+      # Terminate jobs taking more than 15 minutes
+      activeDeadlineSeconds: 900
       template:
         spec:
           containers:
