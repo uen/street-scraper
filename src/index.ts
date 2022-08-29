@@ -1,4 +1,3 @@
-import axios from "axios";
 import { isEmpty } from "lodash";
 import { APP_CONFIG } from "./config";
 import { sendDiscordMessage } from "./discord";
@@ -38,7 +37,7 @@ import {
           ({ property: { id } }) => `${id}` === `${property.id}`
         ) !== -1;
       if (propertyExist) {
-        console.warn("Property already exists", property.displayAddress);
+        console.warn("Property already exists in batch", property.displayAddress);
         continue;
       }
 
@@ -53,14 +52,15 @@ import {
     );
 
     if (listedProperty && listedProperty.isNew) {
+      console.log(`Reduced property: ${listedProperty.property.displayAddress} £${listedProperty.property.price.amount} (${listedProperty.percentageChange})`)
       reducedProperties.push({
         percentageDifference: `${listedProperty.percentageChange}`,
         property,
       });
     } else if (listedProperty) {
+      console.log(`New property: ${listedProperty.property.displayAddress} £${listedProperty.property.price.amount}`)
       newProperties.push(listedProperty.property);
     }
-    // newProperties.push(property);
   }
 
   if (!isEmpty(reducedProperties)) {
@@ -80,7 +80,6 @@ import {
     };
 
     sendDiscordMessage(reducedPropertyMessage);
-
     sendNotification(reducedPropertiesNotification);
   }
 
@@ -100,7 +99,6 @@ import {
     };
 
     sendDiscordMessage(newPropertyMessage);
-
     sendNotification(newPropertyNotification);
   }
 })();
