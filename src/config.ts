@@ -45,10 +45,6 @@ export const APP_CONFIG: IAppConfig = {
       radius: 0.5,
     },
     {
-      searchTerm: "Streatham",
-      radius: 0.5,
-    },
-    {
       searchTerm: "Battersea",
       radius: 1.0,
     },
