@@ -46,6 +46,7 @@ import {
   }
 
   for (const { property, searchTerm } of propertiesToAdd) {
+    console.log(`Exporting property ${property.displayAddress} to spreadsheet`)
     const listedProperty = await handleExportSuitableProperty(
       property,
       searchTerm
@@ -79,7 +80,9 @@ import {
       body: reducedPropertyMessage,
     };
 
+    console.log("Sending reduced property messages to discord")
     sendDiscordMessage(reducedPropertyMessage);
+    console.log("Sending reduced property messages to notiversal")
     sendNotification(reducedPropertiesNotification);
   }
 
@@ -98,7 +101,11 @@ import {
       body: newPropertyMessage,
     };
 
+    console.log("Sending new property messages to discord")
     sendDiscordMessage(newPropertyMessage);
+    console.log("Sending new property messages to notiversal")
     sendNotification(newPropertyNotification);
   }
+
+  console.log("Done!")
 })();
