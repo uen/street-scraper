@@ -3,8 +3,8 @@ import { IProperty } from "../interface/IProperty";
 
 export const generateNewPropertyMessage = (newProperties: IProperty[]) => {
   return `
-**New Properties**
-*${newProperties.length} new properties*
+  @here
+  **${newProperties.length} new properties were found!**
 
 
 ${newProperties
@@ -25,7 +25,8 @@ export const generateReducedPropertyMessage = (
   reducedProperties: IPriceChangeProperty[]
 ) => {
   return `
-    **Reduced Properties**
+    @here
+    **${reducedProperties.length} reduced properties were found!**
 
     
     *${reducedProperties.length} reduced properties*
