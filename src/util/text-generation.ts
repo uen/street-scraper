@@ -9,7 +9,7 @@ ${newProperties
   .filter((property) => property.displayAddress)
   .map(
     (property, index) =>
-      `**${index}**. ${property.displayAddress} £${property.price.amount}\nhttps://www.rightmove.co.uk${property.propertyUrl}`
+      `**${index}**. ${property.displayAddress} £${property.price.amount.toLocaleString()}\nhttps://www.rightmove.co.uk${property.propertyUrl}`
   )
   .join("\n\n")}
     `;
@@ -25,7 +25,7 @@ export const generateReducedPropertyMessage = (
       .filter((reducedProperty) => reducedProperty.property.displayAddress)
       .map(
         (reducedProperty, index) =>
-          `**${index}**. ${reducedProperty.property.displayAddress} £${reducedProperty.property.price.amount} (${reducedProperty.percentageDifference}%)\nhttps://www.rightmove.co.uk${reducedProperty.property.propertyUrl}`
+          `**${index}**. ${reducedProperty.property.displayAddress} £${reducedProperty.property.price.amount.toLocaleString()} (${reducedProperty.percentageDifference}%)\nhttps://www.rightmove.co.uk${reducedProperty.property.propertyUrl}`
       )
       .join("\n\n")}
         `;
