@@ -6,15 +6,23 @@ export const APP_CONFIG: IAppConfig = {
   criteria: [
     {
       searchTerm: "Clapham Station",
-      radius: 1.0,
+      radius: 0.5,
     },
     {
       searchTerm: "Clapham North",
-      radius: 1.0,
+      radius: 0.5,
+    },
+    {
+      searchTerm: "Clapham South",
+      radius: 0.5,
     },
     {
       searchTerm: "Clapham Common",
-      radius: 1.0,
+      radius: 0.5,
+    },
+    {
+      searchTerm: "Clapham Park",
+      radius: 0.5,
     },
     {
       searchTerm: "Putney",
@@ -26,11 +34,11 @@ export const APP_CONFIG: IAppConfig = {
     },
     {
       searchTerm: "Vauxhall",
-      radius: 1.0,
+      radius: 0.5,
     },
     {
       searchTerm: "Stockwell",
-      radius: 1.0,
+      radius: 0.5,
     },
     {
       searchTerm: "Peckham",
@@ -38,6 +46,18 @@ export const APP_CONFIG: IAppConfig = {
     },
     {
       searchTerm: "Streatham",
+      radius: 0.5,
+    },
+    {
+      searchTerm: "Battersea",
+      radius: 0.5,
+    },
+    {
+      searchTerm: "Wandsworth",
+      radius: 0.5,
+    },
+    {
+      searchTerm: "Walworth",
       radius: 0.5,
     },
   ],
