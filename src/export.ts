@@ -76,12 +76,17 @@ export const handleExportSuitableProperty = async (
   const previousPrice = firstMatch
     ? firstMatch["PCM"].substring(1)
     : property.price.amount;
-  const priceChange = firstMatch
+
+  let priceChange = firstMatch
     ? +(
         ((property.price.amount - previousPrice) / previousPrice) *
         100
       ).toFixed(0)
     : 0;
+
+  if (!priceChange && firstMatch && firstMatch["Price change"]) {
+    priceChange = firstMatch["Price change"].slice(0, -1);
+  }
 
   await sheet?.addRow({
     Address: property.displayAddress,
