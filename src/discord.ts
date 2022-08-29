@@ -10,11 +10,9 @@ export const sendDiscordMessage = (content: string) => {
     console.log(`Logged in as ${client?.user?.tag}!`);
 
     const channel = client.channels.cache.find((channel) => {
-      console.log(channel);
       return channel.id === process.env.DISCORD_CHANNEL_ID;
     }) as TextChannel;
 
-    console.log(channel);
     if (channel?.isTextBased()) {
       splitContent.forEach((chunk) => {
         channel.send(chunk.join("\n"));

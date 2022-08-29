@@ -29,6 +29,4 @@ export const sendNotification = async (notification: INotification) => {
       },
     }
   );
-
-  console.log(response.data);
 };

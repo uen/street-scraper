@@ -52,15 +52,7 @@ export const handleExportSuitableProperty = async (
   }
 
   await new Promise((resolve) => setTimeout(resolve, 1000));
-  // console.warn("Found postcode", findPostcode(property.displayAddress));
-  // console.log("FUNSIHED TYPE:|", property.furnishTypes);
 
-  console.log(
-    "MATCHED ROW:",
-    !!matchedRow,
-    matchedRow ? matchedRow["PCM"].substring(1) : "NONE",
-    property.price.amount
-  );
   const previousPrice = matchedRow
     ? matchedRow["PCM"].substring(1)
     : property.price.amount;

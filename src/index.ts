@@ -23,8 +23,6 @@ import {
 
   const propertiesToAdd: { property: IProperty; searchTerm: string }[] = [];
   for (const criteria of resolvedCriteria) {
-    console.log("Processing criteria", criteria);
-
     const locationIdentifier = await getRegionCode(criteria.searchTerm);
 
     const searchParams = {
@@ -34,7 +32,6 @@ import {
 
     const searchResponse = await search(searchParams);
 
-    console.log("Search response", searchResponse);
     for (const property of searchResponse.properties) {
       const propertyExist =
         propertiesToAdd.findIndex(
@@ -67,14 +64,6 @@ import {
   }
 
   if (!isEmpty(reducedProperties)) {
-    console.log(
-      "Reduced property:",
-      reducedProperties.map((a) => ({
-        id: a.property.id,
-        diff: a.percentageDifference,
-      }))
-    );
-
     const reducedPropertyMessage =
       generateReducedPropertyMessage(reducedProperties);
     const reducedPropertiesNotification = {
@@ -96,8 +85,6 @@ import {
   }
 
   if (!isEmpty(newProperties)) {
-    console.log("New properties", newProperties.map((a) => a.id).join(","));
-
     const newPropertyMessage = generateNewPropertyMessage(newProperties);
     const newPropertyNotification = {
       event: "new-properties",
