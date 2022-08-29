@@ -25,7 +25,7 @@ export const generateReducedPropertyMessage = (
       .filter((reducedProperty) => reducedProperty.property.displayAddress)
       .map(
         (reducedProperty, index) =>
-          `${index}. ${reducedProperty.property.displayAddress} ${reducedProperty.property.price.amount} (${reducedProperty.percentageDifference})\n${reducedProperty.property.propertyUrl}`
+          `${index}. ${reducedProperty.property.displayAddress} ${reducedProperty.property.price.amount} (${reducedProperty.percentageDifference})\nhttps://www.rightmove.co.uk${reducedProperty.property.propertyUrl}`
       )
       .join("\n")}
         `;
