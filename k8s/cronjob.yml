@@ -4,7 +4,7 @@ metadata:
   name: street-scraper-cron
   namespace: street-scraper
 spec:
-  schedule: "*/10 * * * *"
+  schedule: "*/30 * * * *"
   jobTemplate:
     spec:
       activeDeadlineSeconds: 480
