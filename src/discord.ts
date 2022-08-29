@@ -6,7 +6,7 @@ export const sendDiscordMessage = (content: string) => {
 
   const splitContent = chunk(content.split("\n\n"), 1);
 
-  client.on("ready", () => {
+  client.on("ready", async () => {
     console.log(`Logged in as ${client?.user?.tag}!`);
 
     const channel = client.channels.cache.find((channel) => {
@@ -14,10 +14,12 @@ export const sendDiscordMessage = (content: string) => {
     }) as TextChannel;
 
     if (channel?.isTextBased()) {
-      splitContent.forEach((chunk) => {
-        channel.send(chunk.join("\n"));
-      });
+      for (const chunk of splitContent) {
+        await channel.send(chunk.join("\n"));
+      }
     }
+
+    client.destroy()
   });
 
   client.on("interactionCreate", async (interaction) => {

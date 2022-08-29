@@ -4,7 +4,6 @@ import {
   GoogleSpreadsheetRow,
   GoogleSpreadsheetWorksheet,
 } from "google-spreadsheet";
-import * as fs from "fs";
 import "dotenv/config";
 import { findPostcode } from "./util/postcode";
 import { APP_CONFIG } from "./config";

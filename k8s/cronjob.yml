@@ -1,0 +1,20 @@
+apiVersion: batch/v1
+kind: CronJob
+metadata:
+  name: street-scraper-cron
+  namespace: street-scraper
+spec:
+  schedule: "*/10 * * * *"
+  jobTemplate:
+    spec:
+      activeDeadlineSeconds: 480
+      template:
+        spec:
+          containers:
+          - name: screet-scraper
+            image: ghcr.io/uen/street-scraper:latest
+            imagePullPolicy: Always
+            envFrom:
+            - secretRef:
+                name: street-scraper-secrets
+          restartPolicy: OnFailure
