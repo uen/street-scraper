@@ -30,6 +30,7 @@ export interface IPriceChangeProperty {
 
 const SHEET_HEADER = [
   "ID",
+  "Address",
   "Postcode",
   "Area",
   "Bedrooms",
@@ -81,6 +82,7 @@ export const handleExportSuitableProperty = async (
     : 0;
 
   await sheet?.addRow({
+    Address: property.displayAddress,
     Postcode: findPostcode(property.displayAddress) ?? "",
     Area: area,
     Beds: property.bedrooms,
