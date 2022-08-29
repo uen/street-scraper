@@ -6,23 +6,23 @@ export const APP_CONFIG: IAppConfig = {
   criteria: [
     {
       searchTerm: "Clapham Station",
-      radius: 0.5,
+      radius: 1.0,
     },
     {
       searchTerm: "Clapham North",
-      radius: 0.5,
+      radius: 1.0,
     },
     {
       searchTerm: "Clapham South",
-      radius: 0.5,
+      radius: 1.0,
     },
     {
       searchTerm: "Clapham Common",
-      radius: 0.5,
+      radius: 1.0,
     },
     {
       searchTerm: "Clapham Park",
-      radius: 0.5,
+      radius: 1.0,
     },
     {
       searchTerm: "Putney",
@@ -34,11 +34,11 @@ export const APP_CONFIG: IAppConfig = {
     },
     {
       searchTerm: "Vauxhall",
-      radius: 0.5,
+      radius: 1.0,
     },
     {
       searchTerm: "Stockwell",
-      radius: 0.5,
+      radius: 1.0,
     },
     {
       searchTerm: "Peckham",
@@ -50,7 +50,7 @@ export const APP_CONFIG: IAppConfig = {
     },
     {
       searchTerm: "Battersea",
-      radius: 0.5,
+      radius: 1.0,
     },
     {
       searchTerm: "Wandsworth",
@@ -60,6 +60,10 @@ export const APP_CONFIG: IAppConfig = {
       searchTerm: "Walworth",
       radius: 0.5,
     },
+    {
+      searchTerm: "Tooting",
+      radius: 1.0,
+    },
   ],
   defaultCriteria: {
     minBedrooms: 3,
@@ -67,7 +71,7 @@ export const APP_CONFIG: IAppConfig = {
     minPrice: 1000,
     maxPrice: 2700,
     numberOfPropertiesPerPage: 50,
-    radius: 1.0,
+    radius: 3.0,
     // Sort enum
     sortType: 6,
     index: 0,
