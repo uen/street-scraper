@@ -109,7 +109,7 @@ export const handleExportSuitableProperty = async (
       ID: property.id,
       "PCM/PP": `£${Math.floor(property.price.amount / APP_CONFIG.peopleCount)}`,
     });
-    
+
     if (firstMatch && priceChange <= -APP_CONFIG.notifyLowerPriceThreshold) {
       return {
         isNew: true,
@@ -128,13 +128,10 @@ export const handleExportSuitableProperty = async (
 };
 
 export const deleteDuplcateRows = async (): Promise<number> => {
-  let dupes = 0
-  
-  for (const duplicateRow of duplicateRows) {
+  for (var i = duplicateRows.length - 1; i >= 0; i--) {
     await new Promise((resolve) => setTimeout(resolve, 1000));
-    await duplicateRow.delete();
-    dupes++
+    await duplicateRows[i].delete()
   }
 
-  return dupes
+  return duplicateRows.length
 }
