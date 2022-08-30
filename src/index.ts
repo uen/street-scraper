@@ -2,6 +2,7 @@ import { isEmpty } from "lodash";
 import { APP_CONFIG } from "./config";
 import { sendDiscordMessage } from "./discord";
 import {
+  deleteDuplcateRows,
   handleExportSuitableProperty,
   IPriceChangeProperty,
   rewriteHeader,
@@ -60,7 +61,7 @@ import {
       searchTerm
     );
 
-    if (listedProperty && listedProperty.isNew) {
+    if (listedProperty && listedProperty.percentageChange) {
       console.log(
         `Reduced property: ${listedProperty.property.displayAddress} £${listedProperty.property.price.amount} (${listedProperty.percentageChange})`
       );
@@ -68,13 +69,17 @@ import {
         percentageDifference: `${listedProperty.percentageChange}`,
         property,
       });
-    } else if (listedProperty) {
+    } else if (listedProperty && listedProperty.isNew) {
       console.log(
         `New property: ${listedProperty.property.displayAddress} £${listedProperty.property.price.amount}`
       );
       newProperties.push(listedProperty.property);
     }
   }
+
+  console.log("Deleting duplicate rows")
+  let duplicateCount = await deleteDuplcateRows()
+  console.log(`Deleted ${duplicateCount} rows`)
 
   if (!isEmpty(reducedProperties)) {
     const reducedPropertyMessage =

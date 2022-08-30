@@ -14,6 +14,8 @@ const document = new GoogleSpreadsheet(process.env.SHEET_DOCUMENT_ID);
 
 let rows: GoogleSpreadsheetRow[] = [];
 let sheet: GoogleSpreadsheetWorksheet | null = null;
+let duplicateRows: GoogleSpreadsheetRow[] = [];
+
 (async () => {
   await document.useServiceAccountAuth({
     client_email: process.env.SHEET_CLIENT_EMAIL ?? "",
@@ -54,10 +56,10 @@ export const handleExportSuitableProperty = async (
   area: string = "Unknown"
 ): Promise<
   | {
-      isNew?: boolean;
-      percentageChange?: number;
-      property: IProperty;
-    }
+    isNew?: boolean;
+    percentageChange?: number;
+    property: IProperty;
+  }
   | undefined
 > => {
   const matchedRows = await rows.filter((row) => {
@@ -67,8 +69,7 @@ export const handleExportSuitableProperty = async (
   });
 
   for (const matchedRow of matchedRows) {
-    await new Promise((resolve) => setTimeout(resolve, 1000));
-    await matchedRow.delete();
+    duplicateRows.push(matchedRow)
   }
 
   const firstMatch = first(matchedRows);
@@ -80,41 +81,60 @@ export const handleExportSuitableProperty = async (
 
   let priceChange = firstMatch
     ? +(
-        ((property.price.amount - previousPrice) / previousPrice) *
-        100
-      ).toFixed(0)
+      ((property.price.amount - previousPrice) / previousPrice) *
+      100
+    ).toFixed(0)
     : 0;
 
   if (!priceChange && firstMatch && firstMatch["Price change"]) {
     priceChange = firstMatch["Price change"].slice(0, -1);
   }
 
-  await sheet?.addRow({
-    Address: property.displayAddress,
-    Postcode: findPostcode(property.displayAddress) ?? "",
-    Area: area,
-    Bedrooms: property.bedrooms,
-    Bathrooms: property.bathrooms,
-    "Updated at": dayjs(property.listingUpdate.listingUpdateDate).format(
-      "DD/MM/YYYY"
-    ),
-    "Price change": priceChange ? `${priceChange}%` : "",
-    Type: property.propertySubType,
-    Link: `https://www.rightmove.co.uk${property.propertyUrl}`,
-    PCM: `£${property.price.amount}`,
-    ID: property.id,
-    "PCM/PP": `£${Math.floor(property.price.amount / APP_CONFIG.peopleCount)}`,
-  });
+  const postcodeResult = findPostcode(property.displayAddress)
 
-  if (firstMatch && priceChange <= -APP_CONFIG.notifyLowerPriceThreshold) {
-    return {
-      isNew: true,
-      percentageChange: priceChange,
-      property,
-    };
-  } else if (!firstMatch) {
-    return {
-      property,
-    };
+  if (postcodeResult && !postcodeResult.excluded) {
+    await sheet?.addRow({
+      Address: property.displayAddress,
+      Postcode: postcodeResult.postcode,
+      Area: area,
+      Bedrooms: property.bedrooms,
+      Bathrooms: property.bathrooms,
+      "Updated at": dayjs(property.listingUpdate.listingUpdateDate).format(
+        "DD/MM/YYYY"
+      ),
+      "Price change": priceChange ? `${priceChange}%` : "",
+      Type: property.propertySubType,
+      Link: `https://www.rightmove.co.uk${property.propertyUrl}`,
+      PCM: `£${property.price.amount}`,
+      ID: property.id,
+      "PCM/PP": `£${Math.floor(property.price.amount / APP_CONFIG.peopleCount)}`,
+    });
+    
+    if (firstMatch && priceChange <= -APP_CONFIG.notifyLowerPriceThreshold) {
+      return {
+        isNew: true,
+        percentageChange: priceChange,
+        property,
+      };
+    } else if (!firstMatch) {
+      return {
+        isNew: true,
+        property,
+      };
+    }
+  } else {
+    console.log(`Property ${property.displayAddress} has been excluded by postcode ${postcodeResult.postcode}`)
   }
 };
+
+export const deleteDuplcateRows = async (): Promise<number> => {
+  let dupes = 0
+  
+  for (const duplicateRow of duplicateRows) {
+    await new Promise((resolve) => setTimeout(resolve, 1000));
+    await duplicateRow.delete();
+    dupes++
+  }
+
+  return dupes
+}
