@@ -11,7 +11,7 @@ ${newProperties
   .filter((property) => property.displayAddress)
   .map(
     (property, index) =>
-      `**${index}**. ${
+      `**${index + 1}**. ${
         property.displayAddress
       } £${property.price.amount.toLocaleString()}\nhttps://www.rightmove.co.uk${
         property.propertyUrl
@@ -34,7 +34,7 @@ export const generateReducedPropertyMessage = (
       .filter((reducedProperty) => reducedProperty.property.displayAddress)
       .map(
         (reducedProperty, index) =>
-          `**${index}**. ${
+          `**${index + 1}**. ${
             reducedProperty.property.displayAddress
           } £${reducedProperty.property.price.amount.toLocaleString()} (${
             reducedProperty.percentageDifference

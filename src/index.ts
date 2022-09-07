@@ -2,13 +2,13 @@ import { isEmpty } from "lodash";
 import { APP_CONFIG } from "./config";
 import { sendDiscordMessage } from "./discord";
 import {
-  deleteDuplcateRows,
   handleExportSuitableProperty,
   IPriceChangeProperty,
   rewriteHeader,
 } from "./export";
 import { IProperty } from "./interface/IProperty";
 import { sendNotification } from "./service/notiversal-api";
+import { findPostcode } from "./util/postcode";
 import { getRegionCode } from "./util/region-code";
 import { search } from "./util/search";
 import {
@@ -42,10 +42,8 @@ import {
           ({ property: { id } }) => `${id}` === `${property.id}`
         ) !== -1;
       if (propertyExist) {
-        console.warn(
-          "Property already exists in batch",
-          property.displayAddress
-        );
+        // If we have already found this property we
+        // don't need to process it again
         continue;
       }
 
@@ -55,13 +53,30 @@ import {
 
   rewriteHeader();
   for (const { property, searchTerm } of propertiesToAdd) {
-    console.log(`Exporting property ${property.displayAddress} to spreadsheet`);
+    // Attempt to get a postcode for the property from its display address.
+    const postcodeResult = findPostcode(property.displayAddress);
+
+    // If our postcode is excluded we can skip this property
+    if (postcodeResult.excluded) {
+      console.log(`Property ${property.displayAddress} has been excluded by postcode ${postcodeResult.postcode}`);
+      continue;
+    }
+
     const listedProperty = await handleExportSuitableProperty(
       property,
-      searchTerm
+      searchTerm,
+      postcodeResult.postcode
     );
 
-    if (listedProperty && listedProperty.percentageChange) {
+    // Wait between each read/write to the spreadsheet
+    await new Promise((res) => setTimeout(res, 1000));
+
+    if (listedProperty.isNew) {
+      console.log(
+        `New property: ${listedProperty.property.displayAddress} £${listedProperty.property.price.amount}`
+      );
+      newProperties.push(listedProperty.property);
+    } else if (!listedProperty.isNew && listedProperty.percentageChange <= -APP_CONFIG.notifyLowerPriceThreshold) {
       console.log(
         `Reduced property: ${listedProperty.property.displayAddress} £${listedProperty.property.price.amount} (${listedProperty.percentageChange})`
       );
@@ -69,17 +84,8 @@ import {
         percentageDifference: `${listedProperty.percentageChange}`,
         property,
       });
-    } else if (listedProperty && listedProperty.isNew) {
-      console.log(
-        `New property: ${listedProperty.property.displayAddress} £${listedProperty.property.price.amount}`
-      );
-      newProperties.push(listedProperty.property);
     }
   }
-
-  console.log("Deleting duplicate rows")
-  let duplicateCount = await deleteDuplcateRows()
-  console.log(`Deleted ${duplicateCount} rows`)
 
   if (!isEmpty(reducedProperties)) {
     const reducedPropertyMessage =
