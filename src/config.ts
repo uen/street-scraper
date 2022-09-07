@@ -60,6 +60,10 @@ export const APP_CONFIG: IAppConfig = {
       searchTerm: "Tooting",
       radius: 1.0,
     },
+    {
+      searchTerm: "Lambeth",
+      radius: 0.5,
+    },
   ],
   defaultCriteria: {
     minBedrooms: 3,
