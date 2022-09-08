@@ -1,6 +1,8 @@
 import { Client, GatewayIntentBits, TextChannel } from "discord.js";
 import "dotenv/config";
 import { chunk } from "lodash";
+import { APP_CONFIG } from "../../config";
+
 export const sendDiscordMessage = (content: string) => {
   const client = new Client({ intents: [GatewayIntentBits.Guilds] });
 
@@ -15,11 +17,13 @@ export const sendDiscordMessage = (content: string) => {
 
     if (channel?.isTextBased()) {
       for (const chunk of splitContent) {
-        await channel.send(chunk.join("\n"));
+        if (!APP_CONFIG.dryRun) {
+          await channel.send(chunk.join("\n"));
+        }
       }
     }
 
-    client.destroy()
+    client.destroy();
   });
 
   client.on("interactionCreate", async (interaction) => {

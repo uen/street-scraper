@@ -1,6 +1,20 @@
-import { IAppConfig } from "./interface/IAppConfig";
+import { ISearchParams } from "./service/rightmove";
+import "dotenv/config";
+
+type ConfigSearchParams = Omit<ISearchParams, "locationIdentifier">;
+
+interface IAppConfig {
+  dryRun: boolean;
+  peopleCount: number;
+  notifyLowerPriceThreshold: number;
+  criteria: (ConfigSearchParams & {
+    searchTerm: string;
+  })[];
+  defaultCriteria: ConfigSearchParams;
+}
 
 export const APP_CONFIG: IAppConfig = {
+  dryRun: process.env.DRY_RUN === "true" ? true : false,
   peopleCount: 3,
   notifyLowerPriceThreshold: 5,
   criteria: [

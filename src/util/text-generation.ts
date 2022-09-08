@@ -1,5 +1,5 @@
-import { IPriceChangeProperty } from "../export";
-import { IProperty } from "../interface/IProperty";
+import { IReducedProperty } from "../service/gdoc";
+import { IProperty } from "../service/rightmove";
 
 export const generateNewPropertyMessage = (newProperties: IProperty[]) => {
   return `
@@ -22,7 +22,7 @@ ${newProperties
 };
 
 export const generateReducedPropertyMessage = (
-  reducedProperties: IPriceChangeProperty[]
+  reducedProperties: IReducedProperty[]
 ) => {
   return `
     @here

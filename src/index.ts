@@ -1,29 +1,34 @@
 import { isEmpty } from "lodash";
 import { APP_CONFIG } from "./config";
-import { sendDiscordMessage } from "./discord";
 import {
   handleExportSuitableProperty,
-  IPriceChangeProperty,
+  IReducedProperty,
   rewriteHeader,
-} from "./export";
-import { IProperty } from "./interface/IProperty";
-import { sendNotification } from "./service/notiversal-api";
-import { findPostcode } from "./util/postcode";
-import { getRegionCode } from "./util/region-code";
-import { search } from "./util/search";
+} from "./service/gdoc";
+import { sendNotification } from "./service/notiversal";
+import { sendDiscordMessage } from "./service/discord";
+import { search, getRegionCode, IProperty } from "./service/rightmove";
 import {
   generateNewPropertyMessage,
   generateReducedPropertyMessage,
 } from "./util/text-generation";
+import { findPostcode } from "./util/postcode";
 
 (async () => {
+
+  console.log("Starting Street-Scraper...\n", APP_CONFIG)
+
+  if (APP_CONFIG.dryRun) {
+    console.warn("Dry run is enabled!")
+  }
+
   const resolvedCriteria = APP_CONFIG.criteria.map((criteria) => ({
     ...APP_CONFIG.defaultCriteria,
     ...criteria,
   }));
 
   const newProperties: IProperty[] = [];
-  const reducedProperties: IPriceChangeProperty[] = [];
+  const reducedProperties: IReducedProperty[] = [];
 
   const propertiesToAdd: { property: IProperty; searchTerm: string }[] = [];
   for (const criteria of resolvedCriteria) {
@@ -62,29 +67,29 @@ import {
       continue;
     }
 
-    const listedProperty = await handleExportSuitableProperty(
+    const propertyExportResult = await handleExportSuitableProperty(
       property,
       searchTerm,
       postcodeResult.postcode
     );
 
-    // Wait between each read/write to the spreadsheet
-    await new Promise((res) => setTimeout(res, 1000));
-
-    if (listedProperty.isNew) {
+    if (propertyExportResult.isNew) {
       console.log(
-        `New property: ${listedProperty.property.displayAddress} £${listedProperty.property.price.amount}`
+        `New property: ${propertyExportResult.property.displayAddress} £${propertyExportResult.property.price.amount}`
       );
-      newProperties.push(listedProperty.property);
-    } else if (!listedProperty.isNew && listedProperty.percentageChange <= -APP_CONFIG.notifyLowerPriceThreshold) {
+      newProperties.push(propertyExportResult.property);
+    } else if (!propertyExportResult.isNew && propertyExportResult.percentageChange <= -APP_CONFIG.notifyLowerPriceThreshold) {
       console.log(
-        `Reduced property: ${listedProperty.property.displayAddress} £${listedProperty.property.price.amount} (${listedProperty.percentageChange})`
+        `Reduced property: ${propertyExportResult.property.displayAddress} £${propertyExportResult.property.price.amount} (${propertyExportResult.percentageChange})`
       );
       reducedProperties.push({
-        percentageDifference: `${listedProperty.percentageChange}`,
+        percentageDifference: `${propertyExportResult.percentageChange}`,
         property,
       });
     }
+
+    // Wait between each operation
+    await new Promise((res) => setTimeout(res, 1000));
   }
 
   if (!isEmpty(reducedProperties)) {
@@ -103,9 +108,7 @@ import {
       body: reducedPropertyMessage,
     };
 
-    console.log("Sending reduced property messages to discord");
     sendDiscordMessage(reducedPropertyMessage);
-    console.log("Sending reduced property messages to notiversal");
     sendNotification(reducedPropertiesNotification);
   }
 
@@ -124,9 +127,7 @@ import {
       body: newPropertyMessage,
     };
 
-    console.log("Sending new property messages to discord");
     sendDiscordMessage(newPropertyMessage);
-    console.log("Sending new property messages to notiversal");
     sendNotification(newPropertyNotification);
   }
 

@@ -1,11 +1,11 @@
-import { IProperty } from "./interface/IProperty";
+import { IProperty } from "../rightmove";
 import {
   GoogleSpreadsheet,
   GoogleSpreadsheetRow,
   GoogleSpreadsheetWorksheet,
 } from "google-spreadsheet";
 import "dotenv/config";
-import { APP_CONFIG } from "./config";
+import { APP_CONFIG } from "../../config";
 import * as dayjs from "dayjs";
 import { first } from "lodash";
 
@@ -23,11 +23,6 @@ let sheet: GoogleSpreadsheetWorksheet;
   sheet = document.sheetsByIndex[0];
   rows = await sheet.getRows();
 })();
-
-export interface IPriceChangeProperty {
-  percentageDifference: string;
-  property: IProperty;
-}
 
 const SHEET_HEADER = [
   "ID",
@@ -53,13 +48,11 @@ export const handleExportSuitableProperty = async (
   property: IProperty,
   area: string = "Unknown",
   postcode: string
-): Promise<
-  | {
-    isNew: boolean;
-    percentageChange: number;
-    property: IProperty;
-  }
-> => {
+): Promise<{
+  isNew: boolean;
+  percentageChange: number;
+  property: IProperty;
+}> => {
   // Get any rows that have the same ID as our property
   const matchedRows = await rows.filter((row) => {
     if (`${row.ID}` === `${property.id}`) {
@@ -68,7 +61,9 @@ export const handleExportSuitableProperty = async (
   });
 
   if (matchedRows.length > 1) {
-    console.warn(`${matchedRows.length} duplicates found for property ${property.displayAddress} (${property.id})`)
+    console.warn(
+      `${matchedRows.length} duplicates found for property ${property.displayAddress} (${property.id})`
+    );
   }
   const existingRow = first(matchedRows);
 
@@ -81,11 +76,10 @@ export const handleExportSuitableProperty = async (
 
     let priceChange = existingRow
       ? +(
-        ((property.price.amount - previousPrice) / previousPrice) *
-        100
-      ).toFixed(0)
+          ((property.price.amount - previousPrice) / previousPrice) *
+          100
+        ).toFixed(0)
       : 0;
-
 
     if (!priceChange && existingRow && existingRow["Price change"]) {
       priceChange = existingRow["Price change"].slice(0, -1);
@@ -93,26 +87,30 @@ export const handleExportSuitableProperty = async (
 
     // Update our existing property
     populateRow(property, area, existingRow, postcode, priceChange);
-    console.log(`Updating existing property ${property.displayAddress} (${property.id})`)
-    await existingRow.save()
+
+    if (!APP_CONFIG.dryRun) {
+      await existingRow.save();
+    }
 
     return {
       isNew: false,
       percentageChange: priceChange,
-      property
-    }
+      property,
+    };
   } else {
     // Create a new row
-    const newRow = new GoogleSpreadsheetRow(sheet, 999, {})
-    populateRow(property, area, newRow, postcode)
-    console.log(`Adding new property ${property.displayAddress} (${property.id})`)
-    await sheet?.addRow(newRow);
+    const newRow = new GoogleSpreadsheetRow(sheet, 999, {});
+    populateRow(property, area, newRow, postcode);
+
+    if (!APP_CONFIG.dryRun) {
+      await sheet.addRow(newRow);
+    }
 
     return {
       isNew: true,
       percentageChange: 0,
-      property
-    }
+      property,
+    };
   }
 };
 
@@ -123,7 +121,6 @@ const populateRow = (
   postcode: string,
   priceChange?: number
 ) => {
-
   row.Address = property.displayAddress;
   row.Postcode = postcode;
   row.Area = area;
@@ -132,10 +129,10 @@ const populateRow = (
   row["Updated at"] = dayjs(property.listingUpdate.listingUpdateDate).format(
     "DD/MM/YYYY"
   );
-  row["Price change"] = priceChange ? `${priceChange}%` : "";
+  row["Price change"] = priceChange;
   row.Type = property.propertySubType;
   row.Link = `https://www.rightmove.co.uk${property.propertyUrl}`;
-  row.PCM = `${property.price.amount}`;
+  row.PCM = property.price.amount;
   row.ID = property.id;
-  row["PCM/PP"] = `£${Math.floor(property.price.amount / APP_CONFIG.peopleCount)}`;
-}
+  row["PCM/PP"] = Math.floor(property.price.amount / APP_CONFIG.peopleCount);
+};
