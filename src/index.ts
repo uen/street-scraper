@@ -42,36 +42,45 @@ import { parseArea } from "./util/area";
       locationIdentifier: location.locationIdentifier,
     };
 
-    const searchResponse = await search(searchParams);
+    try {
+      const searchResponse = await search(searchParams);
 
-    for (const property of searchResponse.properties) {
-      const propertyExist =
-        propertiesToAdd.findIndex(
-          ({ property: { id } }) => `${id}` === `${property.id}`
-        ) !== -1;
-      if (propertyExist) {
-        // If we have already found this property we
-        // don't need to process it again
-        continue;
+      for (const property of searchResponse.properties) {
+        const propertyExist =
+          propertiesToAdd.findIndex(
+            ({ property: { id } }) => `${id}` === `${property.id}`
+          ) !== -1;
+        if (propertyExist) {
+          // If we have already found this property we
+          // don't need to process it again
+          continue;
+        }
+
+        propertiesToAdd.push({
+          property: property,
+          locationDisplayName: location.displayName,
+        });
       }
-
-      propertiesToAdd.push({
-        property: property,
-        locationDisplayName: location.displayName,
-      });
+    } catch (error) {
+      console.warn(
+        `Search for ${criteria.searchTerm} failed`,
+        searchParams,
+        error
+      );
     }
   }
 
   rewriteHeader();
   for (const { property, locationDisplayName } of propertiesToAdd) {
     // Attempt parse some information from the display address.
-    const areaParseResult = parseArea(property.displayAddress, locationDisplayName);
+    const areaParseResult = parseArea(
+      property.displayAddress,
+      locationDisplayName
+    );
 
     // If our display address matches any of our exclusions we should skip it
     if (areaParseResult.excluded) {
-      console.log(
-        `Excluded property: ${property.displayAddress}`
-      );
+      console.log(`Excluded property: ${property.displayAddress}`);
       continue;
     }
 
@@ -100,7 +109,7 @@ import { parseArea } from "./util/area";
       });
     }
 
-    // Wait between each operation
+    // Wait between each spreadsheet operation
     await new Promise((res) => setTimeout(res, 1000));
   }
   rewriteHeader();
