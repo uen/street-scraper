@@ -52,7 +52,6 @@ export const APP_CONFIG: IAppConfig = {
     },
     {
       searchTerm: "Peckham",
-      radius: 0.5,
     },
     {
       searchTerm: "Battersea",
@@ -65,6 +64,9 @@ export const APP_CONFIG: IAppConfig = {
       searchTerm: "Tooting"
     },
     {
+      searchTerm: "Tooting Bec"
+    },
+    {
       searchTerm: "East Dulwich"
     },
     {
@@ -72,13 +74,31 @@ export const APP_CONFIG: IAppConfig = {
     },
     {
       searchTerm: "Camberwell"
+    },
+    {
+      searchTerm: "Elephant and Castle"
+    },
+    {
+      searchTerm: "Pimlico"
+    },
+    {
+      searchTerm: "Lambeth"
+    },
+    {
+      searchTerm: "Bermondsey"
+    },
+    {
+      searchTerm: "Hammersmith"
+    },
+    {
+      searchTerm: "Walworth"
     }
   ],
   defaultCriteria: {
     minBedrooms: 3,
-    maxBedrooms: 4,
+    maxBedrooms: 5,
     minPrice: 500,
-    maxPrice: 2800,
+    maxPrice: 2900,
     numberOfPropertiesPerPage: 50,
     radius: 1.0,
     // Sort enum
