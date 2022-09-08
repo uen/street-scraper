@@ -7,7 +7,7 @@ import {
 } from "./service/gdoc";
 import { sendNotification } from "./service/notiversal";
 import { sendDiscordMessage } from "./service/discord";
-import { search, getRegionCode, IProperty } from "./service/rightmove";
+import { search, getLocation, IProperty } from "./service/rightmove";
 import {
   generateNewPropertyMessage,
   generateReducedPropertyMessage,
@@ -15,11 +15,10 @@ import {
 import { findPostcode } from "./util/postcode";
 
 (async () => {
-
-  console.log("Starting Street-Scraper...\n", APP_CONFIG)
+  console.log("Starting Street-Scraper...\n", APP_CONFIG);
 
   if (APP_CONFIG.dryRun) {
-    console.warn("Dry run is enabled!")
+    console.warn("Dry run is enabled!");
   }
 
   const resolvedCriteria = APP_CONFIG.criteria.map((criteria) => ({
@@ -30,13 +29,17 @@ import { findPostcode } from "./util/postcode";
   const newProperties: IProperty[] = [];
   const reducedProperties: IReducedProperty[] = [];
 
-  const propertiesToAdd: { property: IProperty; searchTerm: string }[] = [];
+  const propertiesToAdd: {
+    property: IProperty;
+    locationDisplayName: string;
+  }[] = [];
+
   for (const criteria of resolvedCriteria) {
-    const locationIdentifier = await getRegionCode(criteria.searchTerm);
+    const location = await getLocation(criteria.searchTerm);
 
     const searchParams = {
       ...criteria,
-      locationIdentifier,
+      locationIdentifier: location.locationIdentifier,
     };
 
     const searchResponse = await search(searchParams);
@@ -52,35 +55,44 @@ import { findPostcode } from "./util/postcode";
         continue;
       }
 
-      propertiesToAdd.push({ property, searchTerm: criteria.searchTerm });
+      propertiesToAdd.push({
+        property: property,
+        locationDisplayName: location.displayName,
+      });
     }
   }
 
   rewriteHeader();
-  for (const { property, searchTerm } of propertiesToAdd) {
+  for (const { property, locationDisplayName } of propertiesToAdd) {
     // Attempt to get a postcode for the property from its display address.
     const postcodeResult = findPostcode(property.displayAddress);
 
     // If our postcode is excluded we can skip this property
     if (postcodeResult.excluded) {
-      console.log(`Property ${property.displayAddress} has been excluded by postcode ${postcodeResult.postcode}`);
+      console.log(
+        `Property ${property.displayAddress} has been excluded by postcode ${postcodeResult.postcode}`
+      );
       continue;
     }
 
     const propertyExportResult = await handleExportSuitableProperty(
       property,
-      searchTerm,
+      locationDisplayName,
       postcodeResult.postcode
     );
 
     if (propertyExportResult.isNew) {
       console.log(
-        `New property: ${propertyExportResult.property.displayAddress} £${propertyExportResult.property.price.amount}`
+        `New property: ${propertyExportResult.property.displayAddress} £${propertyExportResult.property.price.amount}, ${locationDisplayName}`
       );
       newProperties.push(propertyExportResult.property);
-    } else if (!propertyExportResult.isNew && propertyExportResult.percentageChange <= -APP_CONFIG.notifyLowerPriceThreshold) {
+    } else if (
+      !propertyExportResult.isNew &&
+      propertyExportResult.percentageChange <=
+        -APP_CONFIG.notifyLowerPriceThreshold
+    ) {
       console.log(
-        `Reduced property: ${propertyExportResult.property.displayAddress} £${propertyExportResult.property.price.amount} (${propertyExportResult.percentageChange})`
+        `Reduced property: ${propertyExportResult.property.displayAddress} £${propertyExportResult.property.price.amount}, ${locationDisplayName} (${propertyExportResult.percentageChange})`
       );
       reducedProperties.push({
         percentageDifference: `${propertyExportResult.percentageChange}`,

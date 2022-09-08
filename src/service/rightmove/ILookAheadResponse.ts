@@ -1,7 +1,9 @@
 export interface ILookAheadResponse {
-    typeAheadLocations: {
-        displayName: string;
-        locationIdentifier: string;
-        normalisedSearchTerm: string;
-    }[];
+    typeAheadLocations: ILookAheadLocation[];
+}
+
+export interface ILookAheadLocation {
+    displayName: string;
+    locationIdentifier: string;
+    normalisedSearchTerm: string;
 }

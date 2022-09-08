@@ -1,6 +1,6 @@
 import axios from "axios";
 import { chunk, first } from "lodash";
-import { ILookAheadResponse } from "./ILookAheadResponse";
+import { ILookAheadLocation, ILookAheadResponse } from "./ILookAheadResponse";
 import { ISearchParams } from "./ISearchParams";
 import { ISearchResponse } from "./ISearchResponse";
 
@@ -27,7 +27,7 @@ const mapToRequestArray = (
   );
 };
 
-export const getRegionCode = async (searchTerm: string): Promise<string> => {
+export const getLocation = async (searchTerm: string): Promise<ILookAheadLocation> => {
   const searchChunks = chunk(searchTerm.toUpperCase().split(""), 2);
   const encodedChunks = searchChunks.map((chunk) =>
     chunk.map((letter) => encodeURI(letter))
@@ -38,11 +38,11 @@ export const getRegionCode = async (searchTerm: string): Promise<string> => {
     `typeAhead/uknostreet/${searchTerms}`
   );
 
-  const locationIdentifier = first(
+  const location = first(
     data?.typeAheadLocations
-  )?.locationIdentifier;
-  if (status === 200 && locationIdentifier) {
-    return locationIdentifier;
+  );
+  if (status === 200 && location) {
+    return location;
   }
 
   throw new Error(`Could not get region code from string: ${searchTerm}`);

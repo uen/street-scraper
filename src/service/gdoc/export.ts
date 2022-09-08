@@ -8,6 +8,7 @@ import "dotenv/config";
 import { APP_CONFIG } from "../../config";
 import * as dayjs from "dayjs";
 import { first } from "lodash";
+import { IExportResult } from "./IExportResult";
 
 const document = new GoogleSpreadsheet(process.env.SHEET_DOCUMENT_ID);
 
@@ -48,11 +49,7 @@ export const handleExportSuitableProperty = async (
   property: IProperty,
   area: string = "Unknown",
   postcode: string
-): Promise<{
-  isNew: boolean;
-  percentageChange: number;
-  property: IProperty;
-}> => {
+): Promise<IExportResult> => {
   // Get any rows that have the same ID as our property
   const matchedRows = await rows.filter((row) => {
     if (`${row.ID}` === `${property.id}`) {
