@@ -1,18 +1,15 @@
-# Build layer
 FROM node:16-alpine as builder
+
 WORKDIR /build
+COPY package.json package.json
+RUN yarn install --frozen-lockfile
 
-COPY package.json .
-COPY tsconfig.json .
-COPY src .
-
-RUN yarn install --frozen-lockfile --production
-
-# Runtime layer
 FROM node:16-alpine as runtime
-
 WORKDIR /app
-COPY --from=builder /build .
+COPY --from=builder /build/node_modules ./node_modules
 
-ENV NODE_ENV=production
+COPY src ./src
+COPY tsconfig.json ./tsconfig.json
+COPY package.json package.json
+
 ENTRYPOINT [ "yarn", "start"]
