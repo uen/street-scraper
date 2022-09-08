@@ -12,7 +12,7 @@ import {
   generateNewPropertyMessage,
   generateReducedPropertyMessage,
 } from "./util/text-generation";
-import { findPostcode } from "./util/postcode";
+import { parseArea } from "./util/area";
 
 (async () => {
   console.log("Starting Street-Scraper...\n", APP_CONFIG);
@@ -64,13 +64,13 @@ import { findPostcode } from "./util/postcode";
 
   rewriteHeader();
   for (const { property, locationDisplayName } of propertiesToAdd) {
-    // Attempt to get a postcode for the property from its display address.
-    const postcodeResult = findPostcode(property.displayAddress);
+    // Attempt parse some information from the display address.
+    const areaParseResult = parseArea(property.displayAddress, locationDisplayName);
 
-    // If our postcode is excluded we can skip this property
-    if (postcodeResult.excluded) {
+    // If our display address matches any of our exclusions we should skip it
+    if (areaParseResult.excluded) {
       console.log(
-        `Property ${property.displayAddress} has been excluded by postcode ${postcodeResult.postcode}`
+        `Excluded property: ${property.displayAddress}`
       );
       continue;
     }
@@ -78,7 +78,7 @@ import { findPostcode } from "./util/postcode";
     const propertyExportResult = await handleExportSuitableProperty(
       property,
       locationDisplayName,
-      postcodeResult.postcode
+      areaParseResult.postcode
     );
 
     if (propertyExportResult.isNew) {
@@ -103,46 +103,48 @@ import { findPostcode } from "./util/postcode";
     // Wait between each operation
     await new Promise((res) => setTimeout(res, 1000));
   }
-
-  if (!isEmpty(reducedProperties)) {
-    const reducedPropertyMessage =
-      generateReducedPropertyMessage(reducedProperties);
-    const reducedPropertiesNotification = {
-      event: "reduced-propery",
-      title: "Reduced Properties",
-      subtitle: "Properties matching your criteria have been reduced",
-      actions: [
-        {
-          label: "View Properties",
-          link: "https://app.notiversal.com",
-        },
-      ],
-      body: reducedPropertyMessage,
-    };
-
-    sendDiscordMessage(reducedPropertyMessage);
-    sendNotification(reducedPropertiesNotification);
-  }
-
-  if (!isEmpty(newProperties)) {
-    const newPropertyMessage = generateNewPropertyMessage(newProperties);
-    const newPropertyNotification = {
-      event: "new-properties",
-      title: "New Properties",
-      subtitle: "Found new properties matching your criteria",
-      actions: [
-        {
-          label: "View Properties",
-          link: "https://app.notiversal.com",
-        },
-      ],
-      body: newPropertyMessage,
-    };
-
-    sendDiscordMessage(newPropertyMessage);
-    sendNotification(newPropertyNotification);
-  }
-
   rewriteHeader();
+
+  if (APP_CONFIG.notify) {
+    if (!isEmpty(reducedProperties)) {
+      const reducedPropertyMessage =
+        generateReducedPropertyMessage(reducedProperties);
+      const reducedPropertiesNotification = {
+        event: "reduced-propery",
+        title: "Reduced Properties",
+        subtitle: "Properties matching your criteria have been reduced",
+        actions: [
+          {
+            label: "View Properties",
+            link: "https://app.notiversal.com",
+          },
+        ],
+        body: reducedPropertyMessage,
+      };
+
+      sendDiscordMessage(reducedPropertyMessage);
+      sendNotification(reducedPropertiesNotification);
+    }
+
+    if (!isEmpty(newProperties)) {
+      const newPropertyMessage = generateNewPropertyMessage(newProperties);
+      const newPropertyNotification = {
+        event: "new-properties",
+        title: "New Properties",
+        subtitle: "Found new properties matching your criteria",
+        actions: [
+          {
+            label: "View Properties",
+            link: "https://app.notiversal.com",
+          },
+        ],
+        body: newPropertyMessage,
+      };
+
+      sendDiscordMessage(newPropertyMessage);
+      sendNotification(newPropertyNotification);
+    }
+  }
+
   console.log("Done!");
 })();

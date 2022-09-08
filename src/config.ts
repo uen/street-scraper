@@ -5,6 +5,7 @@ type ConfigSearchParams = Omit<ISearchParams, "locationIdentifier">;
 
 interface IAppConfig {
   dryRun: boolean;
+  notify: boolean;
   peopleCount: number;
   notifyLowerPriceThreshold: number;
   criteria: (ConfigSearchParams & {
@@ -14,37 +15,24 @@ interface IAppConfig {
 }
 
 export const APP_CONFIG: IAppConfig = {
+  // Default to false if not set
   dryRun: process.env.DRY_RUN === "true" ? true : false,
+  // Default to true if not set
+  notify: process.env.NOTIFY === "false" ? false : true,
   peopleCount: 3,
   notifyLowerPriceThreshold: 5,
   criteria: [
     {
-      searchTerm: "Clapham Station",
-      radius: 1.0,
-    },
-    {
-      searchTerm: "Clapham North",
-      radius: 1.0,
-    },
-    {
-      searchTerm: "Clapham South",
-      radius: 1.0,
-    },
-    {
-      searchTerm: "Clapham Common",
-      radius: 1.0,
-    },
-    {
-      searchTerm: "Clapham Park",
+      searchTerm: "Clapham",
       radius: 1.0,
     },
     {
       searchTerm: "Putney",
-      radius: 0.5,
+      radius: 1.0,
     },
     {
       searchTerm: "Brixton",
-      radius: 0.5,
+      radius: 1.0,
     },
     {
       searchTerm: "Vauxhall",
@@ -67,17 +55,17 @@ export const APP_CONFIG: IAppConfig = {
       radius: 0.5,
     },
     {
-      searchTerm: "Walworth",
-      radius: 0.5,
-    },
-    {
       searchTerm: "Tooting",
-      radius: 1.0,
-    },
-    {
-      searchTerm: "Lambeth",
       radius: 0.5,
     },
+    {
+      searchTerm: "East Dulwich",
+      radius: 0.5,
+    },
+    {
+      searchTerm: "Camberwell",
+      radius: 0.5,
+    }
   ],
   defaultCriteria: {
     minBedrooms: 3,

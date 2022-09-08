@@ -81,7 +81,7 @@ export const handleExportSuitableProperty = async (
       : 0;
 
     if (!priceChange && existingRow && existingRow["Price change"]) {
-      priceChange = existingRow["Price change"].slice(0, -1);
+      priceChange = existingRow["Price change"]?.slice(0, -1);
     }
 
     // Update our existing property
@@ -137,7 +137,7 @@ const populateRow = (
   row["Updated at"] = dayjs(property.listingUpdate.listingUpdateDate).format(
     "DD/MM/YYYY"
   );
-  row["Price change"] = priceChange ? priceChange : 0;
+  row["Price change"] = priceChange ? priceChange : "0%";
   row.Agent = property.customer.brandTradingName;
   row.Contact = property.customer.contactTelephone;
 };
