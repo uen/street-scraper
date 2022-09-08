@@ -24,7 +24,15 @@ export const APP_CONFIG: IAppConfig = {
   criteria: [
     {
       searchTerm: "Clapham",
-      radius: 1.0,
+      radius: 1.5,
+    },
+    {
+      searchTerm: "Clapham Common",
+      radius: 0.5,
+    },
+    {
+      searchTerm: "Balham",
+      radius: 0.5,
     },
     {
       searchTerm: "Putney",
