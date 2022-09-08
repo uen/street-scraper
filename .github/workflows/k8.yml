@@ -1,0 +1,35 @@
+name: Apply Manifests
+
+on:
+  workflow_dispatch:
+  push:
+    branches: ['master']
+    paths:
+      - 'k8s/**'
+
+env:
+  REGISTRY: ghcr.io/uen
+  IMAGE_NAME: street-scraper
+  CLUSTER: k8s-1-21-3-do-0-lon1-1634243075945
+  CRON_MANIFEST_FILE: k8s/cronjob.yml
+
+jobs:
+   apply-manifests:
+    runs-on: ubuntu-latest
+    permissions:
+      contents: read
+
+    steps:
+      - name: Checkout repository
+        uses: actions/checkout@v2
+
+      - name: Install doctl
+        uses: digitalocean/action-doctl@v2
+        with:
+          token: ${{ secrets.DIGITALOCEAN_ACCESS_TOKEN }}
+       
+      - name: Save kubeconfig
+        run: doctl kubernetes cluster kubeconfig save --expiry-seconds 600 ${{ env.CLUSTER }}
+
+      - name: Apply CronJob
+        run: kubectl apply -f $GITHUB_WORKSPACE/${{ env.CRON_MANIFEST_FILE }}
