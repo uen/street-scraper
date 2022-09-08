@@ -24,31 +24,31 @@ export const APP_CONFIG: IAppConfig = {
   criteria: [
     {
       searchTerm: "Clapham",
-      radius: 1.5,
+      radius: 2.0,
     },
     {
       searchTerm: "Clapham Common",
-      radius: 0.5,
+      radius: 2.0,
     },
     {
       searchTerm: "Balham",
-      radius: 0.5,
+      radius: 1.5,
     },
     {
       searchTerm: "Putney",
-      radius: 1.0,
+      radius: 1.5,
     },
     {
       searchTerm: "Brixton",
-      radius: 1.0,
+      radius: 1.5,
     },
     {
       searchTerm: "Vauxhall",
-      radius: 1.0,
+      radius: 1.5,
     },
     {
       searchTerm: "Stockwell",
-      radius: 1.0,
+      radius: 1.5,
     },
     {
       searchTerm: "Peckham",
@@ -56,32 +56,31 @@ export const APP_CONFIG: IAppConfig = {
     },
     {
       searchTerm: "Battersea",
-      radius: 1.0,
+      radius: 1.5,
     },
     {
-      searchTerm: "Wandsworth",
-      radius: 0.5,
+      searchTerm: "Wandsworth"
     },
     {
-      searchTerm: "Tooting",
-      radius: 0.5,
+      searchTerm: "Tooting"
     },
     {
-      searchTerm: "East Dulwich",
-      radius: 0.5,
+      searchTerm: "East Dulwich"
     },
     {
-      searchTerm: "Camberwell",
-      radius: 0.5,
+      searchTerm: "Dulwich Village"
+    },
+    {
+      searchTerm: "Camberwell"
     }
   ],
   defaultCriteria: {
     minBedrooms: 3,
     maxBedrooms: 4,
-    minPrice: 1000,
-    maxPrice: 2700,
+    minPrice: 500,
+    maxPrice: 2800,
     numberOfPropertiesPerPage: 50,
-    radius: 3.0,
+    radius: 1.0,
     // Sort enum
     sortType: 6,
     index: 0,
