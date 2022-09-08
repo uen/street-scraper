@@ -31,7 +31,7 @@ import { parseArea } from "./util/area";
 
   const propertiesToAdd: {
     property: IProperty;
-    locationDisplayName: string;
+    area: string;
   }[] = [];
 
   for (const criteria of resolvedCriteria) {
@@ -58,7 +58,7 @@ import { parseArea } from "./util/area";
 
         propertiesToAdd.push({
           property: property,
-          locationDisplayName: location.displayName,
+          area: `${location.displayName} +${criteria.radius} miles`,
         });
       }
     } catch (error) {
@@ -71,11 +71,11 @@ import { parseArea } from "./util/area";
   }
 
   rewriteHeader();
-  for (const { property, locationDisplayName } of propertiesToAdd) {
+  for (const { property, area } of propertiesToAdd) {
     // Attempt parse some information from the display address.
     const areaParseResult = parseArea(
       property.displayAddress,
-      locationDisplayName
+      area
     );
 
     // If our display address matches any of our exclusions we should skip it
@@ -86,13 +86,13 @@ import { parseArea } from "./util/area";
 
     const propertyExportResult = await handleExportSuitableProperty(
       property,
-      locationDisplayName,
+      area,
       areaParseResult.postcode
     );
 
     if (propertyExportResult.isNew) {
       console.log(
-        `New property: ${propertyExportResult.property.displayAddress} £${propertyExportResult.property.price.amount}, ${locationDisplayName}`
+        `New property: ${propertyExportResult.property.displayAddress} £${propertyExportResult.property.price.amount}, ${area}`
       );
       newProperties.push(propertyExportResult.property);
     } else if (
@@ -101,7 +101,7 @@ import { parseArea } from "./util/area";
         -APP_CONFIG.notifyLowerPriceThreshold
     ) {
       console.log(
-        `Reduced property: ${propertyExportResult.property.displayAddress} £${propertyExportResult.property.price.amount}, ${locationDisplayName} (${propertyExportResult.percentageChange})`
+        `Reduced property: ${propertyExportResult.property.displayAddress} £${propertyExportResult.property.price.amount}, ${area} (${propertyExportResult.percentageChange})`
       );
       reducedProperties.push({
         percentageDifference: `${propertyExportResult.percentageChange}`,
