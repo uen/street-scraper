@@ -38,6 +38,8 @@ const SHEET_HEADER = [
   "PCM/PP",
   "Updated at",
   "Price change",
+  "Agent",
+  "Contact",
 ];
 
 export const rewriteHeader = async () => {
@@ -85,7 +87,9 @@ export const handleExportSuitableProperty = async (
     // Update our existing property
     populateRow(property, area, existingRow, postcode, priceChange);
 
-    if (!APP_CONFIG.dryRun) {
+    if (APP_CONFIG.dryRun) {
+      console.log(existingRow._rawData);
+    } else {
       await existingRow.save();
     }
 
@@ -99,7 +103,9 @@ export const handleExportSuitableProperty = async (
     const newRow = new GoogleSpreadsheetRow(sheet, 999, {});
     populateRow(property, area, newRow, postcode);
 
-    if (!APP_CONFIG.dryRun) {
+    if (APP_CONFIG.dryRun) {
+      console.log(newRow._rawData);
+    } else {
       await sheet.addRow(newRow);
     }
 
@@ -118,18 +124,20 @@ const populateRow = (
   postcode: string,
   priceChange?: number
 ) => {
+  row.ID = property.id;
   row.Address = property.displayAddress;
   row.Postcode = postcode;
   row.Area = area;
-  row.Bedrooms = property.bedrooms;
-  row.Bathrooms = property.bathrooms;
-  row["Updated at"] = dayjs(property.listingUpdate.listingUpdateDate).format(
-    "DD/MM/YYYY"
-  );
-  row["Price change"] = priceChange;
+  row.Bedrooms = property.bedrooms ?? "Not specified";
+  row.Bathrooms = property.bathrooms ?? "Not specified";
   row.Type = property.propertySubType;
   row.Link = `https://www.rightmove.co.uk${property.propertyUrl}`;
   row.PCM = property.price.amount;
-  row.ID = property.id;
   row["PCM/PP"] = Math.floor(property.price.amount / APP_CONFIG.peopleCount);
+  row["Updated at"] = dayjs(property.listingUpdate.listingUpdateDate).format(
+    "DD/MM/YYYY"
+  );
+  row["Price change"] = priceChange ? priceChange : 0;
+  row.Agent = property.customer.brandTradingName;
+  row.Contact = property.customer.contactTelephone;
 };
