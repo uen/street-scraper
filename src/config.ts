@@ -10,6 +10,7 @@ interface IAppConfig {
   notifyLowerPriceThreshold: number;
   criteria: (ConfigSearchParams & {
     searchTerm: string;
+    locationIdentifier?: string;
   })[];
   defaultCriteria: ConfigSearchParams;
 }
@@ -55,19 +56,21 @@ export const APP_CONFIG: IAppConfig = {
       searchTerm: "Tooting"
     },
     {
-      searchTerm: "Tooting Bec"
+      searchTerm: "Tooting Bec Station"
     },
     {
       searchTerm: "East Dulwich"
     },
     {
-      searchTerm: "West Dulwich"
+      searchTerm: "West Dulwich South East London",
+      locationIdentifier: "REGION^70448"
     },
     {
-      searchTerm: "Dulwich Village"
+      searchTerm: "Dulwich Village",
     },
     {
-      searchTerm: "Camberwell"
+      searchTerm: "Camberwell",
+      locationIdentifier: "REGION^70440"
     },
     {
       searchTerm: "Elephant and Castle"

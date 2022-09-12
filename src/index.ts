@@ -35,12 +35,22 @@ import { parseArea } from "./util/area";
   }[] = [];
 
   for (const criteria of resolvedCriteria) {
-    const location = await getLocation(criteria.searchTerm);
-
     const searchParams = {
       ...criteria,
-      locationIdentifier: location.locationIdentifier,
     };
+
+
+    const location = await getLocation(criteria.searchTerm);
+    
+    // If we have specified a location identifier in config
+    // we should use that instead of the one derived from the search term
+    if (criteria.locationIdentifier) {
+      console.log(`Overriding location ${location.displayName} ${location.locationIdentifier} with ${criteria.searchTerm} ${criteria.locationIdentifier}`)
+      location.displayName = criteria.searchTerm
+      searchParams.locationIdentifier = criteria.locationIdentifier;
+    } else {
+      searchParams.locationIdentifier = location.locationIdentifier;
+    }
 
     try {
       const searchResponse = await search(searchParams);
@@ -73,10 +83,7 @@ import { parseArea } from "./util/area";
   rewriteHeader();
   for (const { property, area } of propertiesToAdd) {
     // Attempt parse some information from the display address.
-    const areaParseResult = parseArea(
-      property.displayAddress,
-      area
-    );
+    const areaParseResult = parseArea(property.displayAddress, area);
 
     // If our display address matches any of our exclusions we should skip it
     if (areaParseResult.excluded) {

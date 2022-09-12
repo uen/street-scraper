@@ -41,7 +41,9 @@ export const getLocation = async (searchTerm: string): Promise<ILookAheadLocatio
   const location = first(
     data?.typeAheadLocations
   );
+ 
   if (status === 200 && location) {
+    console.log(`Identified ${location.displayName} from term ${searchTerm}`)
     return location;
   }
 

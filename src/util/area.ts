@@ -1,4 +1,5 @@
 import { first } from "lodash";
+import { arch } from "os";
 
 const POSTCODE_REGEX = /[a-zA-Z]{1,2}\d{1,2}(?:\s\d[a-zA-Z]{2})?/;
 
@@ -15,19 +16,38 @@ export const parseArea = (
 } => {
   const postcode = first(address.match(POSTCODE_REGEX))?.toUpperCase();
 
-  if (
-    !postcode?.match(POSTCODE_INCLUDE_REGEX) ||
-    address.match(AREA_EXCLUDE_REGEX) ||
-    location.match(AREA_EXCLUDE_REGEX)
-  ) {
+  if (postcode && postcode.match(POSTCODE_INCLUDE_REGEX)) {
+      return {
+        excluded: false,
+        postcode
+      }
+  }
+
+  if (location.match(AREA_EXCLUDE_REGEX) || address.match(AREA_EXCLUDE_REGEX)) {
     return {
       excluded: true,
-      postcode: postcode ? postcode : "",
-    };
-  } else {
-    return {
-      excluded: false,
-      postcode: postcode ? postcode : "",
-    };
+      postcode: ""
+    }
   }
+
+  return {
+    excluded: false,
+    postcode: ""
+  }
+  // if (
+  //   postcode &&
+  //   (!postcode.match(POSTCODE_INCLUDE_REGEX) ||
+  //     address.match(AREA_EXCLUDE_REGEX) ||
+  //     location.match(AREA_EXCLUDE_REGEX))
+  // ) {
+  //   return {
+  //     excluded: true,
+  //     postcode: postcode ? postcode : "",
+  //   };
+  // } else {
+  //   return {
+  //     excluded: false,
+  //     postcode: postcode ? postcode : "",
+  //   };
+  // }
 };
