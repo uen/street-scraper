@@ -61,6 +61,9 @@ export const APP_CONFIG: IAppConfig = {
       searchTerm: "East Dulwich"
     },
     {
+      searchTerm: "West Dulwich"
+    },
+    {
       searchTerm: "Dulwich Village"
     },
     {
@@ -83,6 +86,9 @@ export const APP_CONFIG: IAppConfig = {
     },
     {
       searchTerm: "Walworth"
+    },
+    {
+      searchTerm: "Brockwell Park"
     }
   ],
   defaultCriteria: {
@@ -90,7 +96,7 @@ export const APP_CONFIG: IAppConfig = {
     maxBedrooms: 5,
     minPrice: 500,
     maxPrice: 2900,
-    numberOfPropertiesPerPage: 50,
+    numberOfPropertiesPerPage: 24,
     radius: 1.0,
     // Sort enum
     sortType: 6,
