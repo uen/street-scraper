@@ -86,9 +86,6 @@ export const APP_CONFIG: IAppConfig = {
     },
     {
       searchTerm: "Walworth"
-    },
-    {
-      searchTerm: "Brockwell Park"
     }
   ],
   defaultCriteria: {
