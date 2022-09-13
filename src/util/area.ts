@@ -16,9 +16,9 @@ export const parseArea = (
 } => {
   const postcode = first(address.match(POSTCODE_REGEX))?.toUpperCase();
 
-  if (postcode && postcode.match(POSTCODE_INCLUDE_REGEX)) {
+  if (postcode && !postcode.match(POSTCODE_INCLUDE_REGEX)) {
       return {
-        excluded: false,
+        excluded: true,
         postcode
       }
   }
@@ -34,20 +34,4 @@ export const parseArea = (
     excluded: false,
     postcode: ""
   }
-  // if (
-  //   postcode &&
-  //   (!postcode.match(POSTCODE_INCLUDE_REGEX) ||
-  //     address.match(AREA_EXCLUDE_REGEX) ||
-  //     location.match(AREA_EXCLUDE_REGEX))
-  // ) {
-  //   return {
-  //     excluded: true,
-  //     postcode: postcode ? postcode : "",
-  //   };
-  // } else {
-  //   return {
-  //     excluded: false,
-  //     postcode: postcode ? postcode : "",
-  //   };
-  // }
 };

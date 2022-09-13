@@ -89,6 +89,9 @@ export const APP_CONFIG: IAppConfig = {
     },
     {
       searchTerm: "Walworth"
+    },
+    {
+      searchTerm: "Streatham Hill"
     }
   ],
   defaultCriteria: {
