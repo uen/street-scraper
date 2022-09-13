@@ -1,5 +1,4 @@
 import { first } from "lodash";
-import { arch } from "os";
 
 const POSTCODE_REGEX = /[a-zA-Z]{1,2}\d{1,2}(?:\s\d[a-zA-Z]{2})?/;
 
