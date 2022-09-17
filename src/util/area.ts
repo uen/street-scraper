@@ -25,12 +25,12 @@ export const parseArea = (
   if (location.match(AREA_EXCLUDE_REGEX) || address.match(AREA_EXCLUDE_REGEX)) {
     return {
       excluded: true,
-      postcode: ""
+      postcode: postcode ?? ""
     }
   }
 
   return {
     excluded: false,
-    postcode: ""
+    postcode: postcode ?? ""
   }
 };
