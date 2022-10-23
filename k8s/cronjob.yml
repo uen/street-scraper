@@ -4,6 +4,7 @@ metadata:
   name: street-scraper-cron
   namespace: street-scraper
 spec:
+  suspend: true
   schedule: "*/30 * * * *"
   failedJobsHistoryLimit: 3
   successfulJobsHistoryLimit: 3
